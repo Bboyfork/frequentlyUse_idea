@@ -19,6 +19,7 @@ public class EmployeeService {
         System.out.println("查询"+id + "号员工");
         Employee emp = employeeMapper.getEmpById(id);
         System.out.println("git测试");
+        System.out.println("从本地仓库到远端提交测试");
         return emp;
     }
 }
