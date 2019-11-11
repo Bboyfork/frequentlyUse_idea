@@ -1,5 +1,6 @@
 package com.fork.cache.bean;
 
+
 public class Department {
 	
 	private Integer id;
