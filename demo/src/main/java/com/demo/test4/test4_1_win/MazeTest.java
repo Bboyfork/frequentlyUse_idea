@@ -1,6 +1,6 @@
 package com.demo.test4.test4_1_win;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -100,9 +100,50 @@ public class MazeTest extends JFrame implements GridColors {
 
     public void solve() {
         Maze m = new Maze(theGrid);
-        boolean found = m.findMazePath();
+        //test the findAllMazePaths and findMazePathMin's outputs
+        //(only if there is a path to the exit exists)
+        ArrayList<PairInt> tempBlack = new ArrayList<PairInt>();
+        for(int i = 0 ; i < theGrid.getNRows() ; i++){
+            for(int j = 0; j < theGrid.getNCols() ; j++){
+                Color color = theGrid.getColor(i, j);
+                if(color.equals(NON_BACKGROUND)){
+                    tempBlack.add(new PairInt(i,j));
+                }
+            }
+        }
+
+        ArrayList<ArrayList<PairInt>> arr = new ArrayList<ArrayList<PairInt>>();
+        for (int i = 0; i < m.findAllMazePaths(0,0).size(); ++i) {
+            ArrayList<PairInt> pairIntstemp = new ArrayList<PairInt>();
+            ArrayList<PairInt> pairInts = m.findAllMazePaths(0, 0).get(i);
+            pairIntstemp = pairInts;
+            arr.add(pairIntstemp);
+            System.out.println("The paths are1:" + pairInts);
+
+        }
+        System.out.println("The shortest path is:" + m.findMazePathMin(0,0));
+        boolean found = false;
+        for (ArrayList<PairInt> pairInts :arr) {
+            for (PairInt p:pairInts) {
+//                System.out.println(p);
+                tempBlack.remove(p);
+//                System.out.println(pairInts);
+//                System.out.println(tempBlack);
+
+                theGrid.recolor(p.getX(),p.getY(),PATH);
+                found = true;
+            }
+        }
+        for (PairInt p:tempBlack) {
+            int x =p.getX();
+            int y =p.getY();
+            theGrid.recolor(x,y,TEMPORARY);
+
+        }
+
         if (found) {
             JOptionPane.showMessageDialog(null, "Success - reset maze and try again");
+
         } else {
             JOptionPane.showMessageDialog(null, "No path - reset maze and try again");
         }

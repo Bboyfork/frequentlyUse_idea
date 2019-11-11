@@ -1,8 +1,6 @@
 package com.demo.test4.test4_1_win;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -35,129 +33,146 @@ public class Maze implements GridColors {
      * @return If a path through (x, y) is found, true;
      *         otherwise, false
      */
+    
+ /* Problem1
+  		public boolean findMazePath(int x, int y) {
+        //边界判断
+        if(x<0 || y<0 ||x>=maze.getNRows()||y>=maze.getNCols()){
+           return false;
+        }
+
+        //记录路径
+        PairInt pairInt = new PairInt(x, y);
+        trace.push(pairInt);
+
+        //终点判断
+        if(x == maze.getNRows()-1 && y == maze.getNCols()-1){
+            Stack<PairInt> traceTemp = new Stack<>();
+            for (PairInt p :trace) {
+                traceTemp.push(p);
+            }
+            result.add(traceTemp);
+            maze.recolor(x,y,TEMPORARY);
+
+        }
+        //颜色是否可走    ！下一步节点是否为走过的路径
+        if(eqClor(x+1,y) && !findStrack(x+1,y) && findMazePath(x+1,y)){
+            System.out.println("往右走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x,y+1) && !findStrack(x,y+1) && findMazePath(x,y+1)){
+            System.out.println("往下走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x-1,y) && !findStrack(x-1,y) && findMazePath(x-1,y)){
+            System.out.println("往左走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x,y-1) && !findStrack(x,y-1) && findMazePath(x,y-1)){
+            System.out.println("往上走" + x +"<--x、y-->"+ y);
+        }else{
+            trace.pop();
+            maze.recolor(x,y,TEMPORARY);
+            return false;
+        }
+
+        //Backtracking
+        System.out.println("回退" + x +"<--x、y-->"+ y);
+        trace.pop();
+        return true;
+    }
+    */
+    
+    //Problem 1
     public boolean findMazePath(int x, int y) {
 
-        // if current point out of bound of grid, then return false
+        // 越界，返回false
         if (x < 0 || y < 0 || x >= maze.getNCols() || y >= maze.getNRows()) {
             return false;
-
-        // if current point cannot be part of the path, return false
+        // 非出口路线之一，返回false
         } else if (!maze.getColor(x, y).equals(NON_BACKGROUND)) {
             return false;
-
-        // if current point equals to exit, return true
+        // 是出口，返回true
         } else if (x == maze.getNCols() - 1 && y == maze.getNRows() - 1) {
             maze.recolor(x, y, PATH);
             return true;
-
-        // if didn't find exit at current point, set current point to PATH
         } else {
             maze.recolor(x, y, PATH);
-
-            // if the neighbour points of current point is exit, return true
+            //附近是path，返回true
             if (findMazePath(x - 1, y) || findMazePath(x + 1, y) ||
-            findMazePath(x, y + 1) || findMazePath(x, y -1)) {
+                findMazePath(x, y + 1) || findMazePath(x, y -1)) {
                 return true;
-
-            // else, recolor current point to TEMPORARY
+            // 染temp色
             } else {
                 maze.recolor(x, y, TEMPORARY);
                 return false;
             }
         }
-
     }
 
-    /*
-    helper method
-     */
-    public void findMazePathStackBased(int x, int y,
-                                       ArrayList<ArrayList<PairInt>> result,
-                                       Stack<PairInt> trace){
-
-        // if x and y are out of bounds or not equal to red, then  the find method terminates
+    //Helper method for Problem2
+    public void findMazePathStackBased(int x, int y,ArrayList<ArrayList<PairInt>> result,
+                             		   Stack<PairInt> trace){
+    	
         if (x < 0 || y < 0 || x > maze.getNCols() - 1 || y > maze.getNRows() - 1 ||
                 (!maze.getColor(x, y).equals(NON_BACKGROUND))){
             return;
-
-        // if exit is found, then push the exit point to trace, and then add to result
+        // if we find the exit, we push the exit point to trace and add it to the result
         } else if (x == maze.getNCols() - 1 && y == maze.getNRows() - 1) {
-            trace.push(new PairInt(x, y)); // exit point added to trace
-            ArrayList<PairInt> cur = new ArrayList<>(trace); //
-//            cur.addAll(trace); // add all elements to list cur from trace
-            result.add(cur);
-            trace.pop(); // After visited this point, need to remove from trace
-            maze.recolor(x, y, NON_BACKGROUND); // recolor this point to Non_background for re-visiting
+            trace.push(new PairInt(x, y));
+            ArrayList<PairInt> current = new ArrayList<>(trace);
+            result.add(current);
+            trace.pop(); 
+            maze.recolor(x, y, NON_BACKGROUND); //recolor
             return;
         } else {
-
-            // if the point is not exit, then recursion is executed
-            trace.push(new PairInt(x, y)); // push
-            maze.recolor(x, y, PATH); // recolor this point to PATH before recursion
-            findMazePathStackBased(x, y + 1, result, trace);
-            findMazePathStackBased(x, y - 1, result, trace);
+            // if this point is not the exit, continue the recursion 
+            trace.push(new PairInt(x, y));
+            maze.recolor(x, y, PATH); // recolor
             findMazePathStackBased(x + 1, y, result, trace);
             findMazePathStackBased(x - 1, y, result, trace);
-            //backtracking
+            findMazePathStackBased(x, y + 1, result, trace);
+            findMazePathStackBased(x, y - 1, result, trace);
+            //backtracking?
             maze.recolor(x, y, NON_BACKGROUND);
             trace.pop();
             return;
         }
-
     }
-
-    /*
-    wrapper method
-     */
+    
+    //Problem2
     public ArrayList<ArrayList<PairInt>> findAllMazePaths(int x, int y) {
 
         ArrayList<ArrayList<PairInt>> result = new ArrayList<>();
-        Stack<PairInt> trace = new Stack<>();
+        Stack<PairInt> trace = new Stack<PairInt>();
         findMazePathStackBased(0, 0, result, trace);
-
         return result;
     }
 
-
-    /*
-    Find the shortest path by counting element in ArrayList<PairInt>
-     */
+    //Problem3
     public ArrayList<PairInt> findMazePathMin(int x, int y) {
 
-        int index = 0;
-        int[] count;
-        int min;
-
-        // arrayList minPath is the result from find all possible paths
-        ArrayList<ArrayList<PairInt>> allPaths;
-        allPaths = findAllMazePaths(x, y);
-
-        // create an arrayList which size equals the size of result
-        count = new int[allPaths.size()];
-
-        // each element is the size of previous sublist of the result list
-        for (int i = 0; i < allPaths.size(); i++) {
-            count[i] = allPaths.get(i).size();
+        int target = 0;//the shortest path's index in the counterArray
+        int temp;//temp value uesd to compare to
+        int[] counterArray;//a Array used to store all the paths' length
+        //这个allMazePaths只有在找到出口路线时候 才能存到里面，说白了没有出口时候他根本接受不到值，
+        //我用它存的所有出口路线，findAllMazePath(x,y)是写好的，自动返回所有出口路线
+        //这时候156行就new不出来数组 因为他没有.size()
+        //加的那个if 看起来好像行，其实还是拉稀
+        ArrayList<ArrayList<PairInt>> allMazePaths;
+        allMazePaths = findAllMazePaths(x, y);
+        counterArray = new int[allMazePaths.size()];
+        for (int i = 0; i < allMazePaths.size(); ++i) {
+            counterArray[i] = allMazePaths.get(i).size();
         }
-
-        // initial min = 0
-        min = count[0];
-
-        // loop to find the smallest count and its index
-        for (int i = 1; i < count.length; i++) {
-            if (count[i] < min) {
-                min = count[i];
-                index = i;
-            }
-        }
-
-        // return the path which has the smallest count number
-        return allPaths.get(index);
-
-
+        //
+        if(!(allMazePaths.size()==0)) {
+            temp = counterArray[0];
+            for (int i = 1; i < counterArray.length; ++i) {
+                if (counterArray[i] < temp) {
+                    temp = counterArray[i];
+                    target = i;
+                    }
+                }
+            return allMazePaths.get(target);
+        }else
+            return new ArrayList();        // return the shortest path
     }
     
-
     /*<exercise chapter="5" section="6" type="programming" number="2">*/
     public void resetTemp() {
         maze.recolor(TEMPORARY, BACKGROUND);

@@ -42,7 +42,7 @@ public class Maze implements GridColors {
             }
         }
     }
-    /**
+    /**demo --为yjs写的作业相关，包含一些简单的java基础：java双链表(挺假的)、迷宫探索。
      * Attempts to find a path through point (x, y).
      * @pre Possible path cells are in BACKGROUND color;
      *      barrier cells are in ABNORMAL color.

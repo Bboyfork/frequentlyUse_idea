@@ -23,6 +23,8 @@ public class Maze implements GridColors {
     public boolean findMazePath() {
         // (0, 0) is the start point.
         findMazePath(0, 0);
+        //染色
+        printPath(result);
         if(result.isEmpty()){
             System.out.println(result);
             System.out.println("空集合");
@@ -32,8 +34,15 @@ public class Maze implements GridColors {
             return true;
         }
     }
-
-    /**
+    //染色
+    public void printPath(ArrayList<Stack <PairInt>> arr){
+        for (Stack<PairInt> sta:arr){
+            for (PairInt p :sta) {
+                maze.recolor(p.getX(),p.getY(),PATH);
+            }
+        }
+    }
+    /**demo --为yjs写的作业相关，包含一些简单的java基础：java双链表(挺假的)、迷宫探索。
      * Attempts to find a path through point (x, y).
      * @pre Possible path cells are in BACKGROUND color;
      *      barrier cells are in ABNORMAL color.
@@ -64,31 +73,28 @@ public class Maze implements GridColors {
                 traceTemp.push(p);
             }
             result.add(traceTemp);
-            return true;
+            maze.recolor(x,y,TEMPORARY);
+            return false;
+        }
+        //颜色是否可走    ！下一步节点是否为走过的路径
+        if(eqClor(x+1,y) && !findStrack(x+1,y) && findMazePath(x+1,y)){
+            System.out.println("往右走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x,y+1) && !findStrack(x,y+1) && findMazePath(x,y+1)){
+            System.out.println("往下走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x-1,y) && !findStrack(x-1,y) && findMazePath(x-1,y)){
+            System.out.println("往左走" + x +"<--x、y-->"+ y);
+        }else if(eqClor(x,y-1) && !findStrack(x,y-1) && findMazePath(x,y-1)){
+            System.out.println("往上走" + x +"<--x、y-->"+ y);
+        }else{
+            trace.pop();
+            maze.recolor(x,y,TEMPORARY);
+            return false;
         }
 
-//找路径 不能往回走
-        if(eqClor(x+1,y) && findStrack(x,y) && findMazePath(x+1,y)){
-            System.out.println("往右走" + x +"<--x、y-->"+ y);
-            trace.pop();
-            return true;
-        }else if(eqClor(x,y+1) && findStrack(x,y) && findMazePath(x,y+1)){
-            System.out.println("往下走" + x +"<--x、y-->"+ y);
-            trace.pop();
-            return true;
-        }else if(eqClor(x-1,y) && findStrack(x,y) && findMazePath(x-1,y)){
-            System.out.println("往左走" + x +"<--x、y-->"+ y);
-            trace.pop();
-            return true;
-        }else if(eqClor(x,y-1) && findStrack(x,y) && findMazePath(x,y-1)){
-            System.out.println("往上走" + x +"<--x、y-->"+ y);
-            trace.pop();
-            return true;
-        }else{
-            //这里代表应该回退
-            System.out.println("回退" + x +"<--x、y-->"+ y);
-        }
-        return false;
+        //这里代表应该回退
+        System.out.println("回退" + x +"<--x、y-->"+ y);
+        trace.pop();
+        return true;
     }
 
 //    //记录路径
@@ -99,7 +105,7 @@ public class Maze implements GridColors {
 
 
 
-//检验是否为走过的路径
+//检验是否为走过的路径    当前节点x y
     public boolean findStrack(int x ,int y){
         boolean flag1 = false;
         for (PairInt p :trace) {
@@ -114,9 +120,9 @@ public class Maze implements GridColors {
         if(x<0 || y<0 ||x>=maze.getNRows()||y>=maze.getNCols()){
             return false;
         }
-        if(maze.getColor(x,y).equals(PATH)||maze.getColor(x,y).equals(NON_BACKGROUND)){//绿色、红色
+        if(maze.getColor(x,y).equals(PATH)||maze.getColor(x,y).equals(NON_BACKGROUND)){//绿色、红色、黑色
             return true;
-        }else if(maze.getColor(x,y).equals(BACKGROUND)){//白色
+        }else if(maze.getColor(x,y).equals(BACKGROUND)||maze.getColor(x,y).equals(TEMPORARY)){//白色、黑色
             return false;
         }else{
             System.out.println("返回了非 白、红、绿 有异常");
@@ -124,10 +130,9 @@ public class Maze implements GridColors {
         }
     }
 
-    //都走 然后将所有情况和堆栈中比较 更新、
-    // ADD METHOD FOR PROBLEM 2 HERE
-    // ADD METHOD FOR PROBLEM 3 HERE
-
+/*
+* 这俩方法没用上 思路不融合 想不出来怎么用
+* */
     public void findMazePathStackBased
     (int x, int y, ArrayList<ArrayList<PairInt>> result, Stack<PairInt> trace){
 
