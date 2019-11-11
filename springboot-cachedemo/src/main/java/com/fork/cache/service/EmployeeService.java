@@ -18,6 +18,7 @@ public class EmployeeService {
     public Employee getEmp(Integer id){
         System.out.println("查询"+id + "号员工");
         Employee emp = employeeMapper.getEmpById(id);
+        System.out.println("git测试");
         return emp;
     }
 }
