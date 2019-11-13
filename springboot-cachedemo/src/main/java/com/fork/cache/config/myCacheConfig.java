@@ -16,6 +16,7 @@ public class myCacheConfig {
             @Override
             public Object generate(Object o, Method method, Object... params) {
                 return method.getName()+"["+ Arrays.asList(params.toString()) +"]";
+
             }
         };
     }
