@@ -74,6 +74,8 @@ public class Maze implements GridColors {
         System.out.println("回退" + x +"<--x、y-->"+ y);
         trace.pop();
         return true;
+
+
     }
     */
     
